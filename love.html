@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Для моей Алины 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff8fa3;       /* Нежно-розовый */
+            --accent: #ff4d6d;        /* Яркий акцент */
+            --bg-gradient: linear-gradient(135deg, #fff0f3 0%, #ffe3e9 100%);
+            --glass: rgba(255, 255, 255, 0.7);
+            --border: 1px solid rgba(255, 255, 255, 0.8);
+            --shadow: 0 10px 30px rgba(255, 77, 109, 0.15);
+            --text: #5c4a52;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Плавающие частицы на фоне */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+            opacity: 0.6;
+        }
+
+        /* Загрузочный экран */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff0f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
+        }
+        
+        .heart-beat {
+            font-size: 4rem;
+            animation: beat 1s infinite alternate;
+        }
+
+        @keyframes beat { from { transform: scale(1); } to { transform: scale(1.2); } }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        /* Заголовок */
+        header {
+            text-align: center;
+            margin: 40px 0;
+            animation: slideDown 1s ease;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #ff4d6d, #ff8fa3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            filter: drop-shadow(2px 2px 0px #fff);
+        }
+
+        .subtitle {
+            background: white;
+            color: var(--accent);
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* Плеер */
+        .player {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .cover {
+            width: 55px;
+            height: 55px;
+            background: #222;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .info { flex: 1; }
+        .song-title { font-weight: 700; color: #333; }
+        .song-artist { font-size: 0.85rem; color: #888; margin-top: 4px; }
+
+        /* Счетчики */
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .count { font-size: 1.6rem; font-weight: 800; color: var(--accent); display: block; }
+        .label { font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Карточки */
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 24px;
+            padding: 25px;
+            position: relative;
+            border: var(--border);
+            box-shadow: 0 5px 20px rgba(255, 143, 163, 0.1);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(30px);
+            opacity: 0;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
+            z-index: 10;
+        }
+
+        .emoji {
+            font-size: 2.5rem;
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            padding-right: 40px;
+        }
+
+        .card p {
+            margin: 0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .quote {
+            background: #fff0f3;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-top: 12px;
+            font-style: italic;
+            color: var(--accent);
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Кнопка */
+        .btn-love {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 45px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4);
+            cursor: pointer;
+            z-index: 100;
+            white-space: nowrap;
+            transition: transform 0.2s;
+        }
+
+        .btn-love:active { transform: translateX(-50%) scale(0.95); }
+
+        /* Анимации */
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="loader" id="loader">
+        <div class="heart-beat">💖</div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header>
+            <h1>Наша История</h1>
+            <div class="subtitle">✨ Самые теплые моменты ✨</div>
+        </header>
+
+        <div class="stats">
+            <div class="stat-box">
+                <span class="count" id="days">0</span>
+                <span class="label">Дней вместе</span>
+            </div>
+            <div class="stat-box">
+                <span class="count">41 000</span>
+                <span class="label">Сообщений</span>
+            </div>
+        </div>
+
+        <div class="player">
+            <div class="cover">R+</div>
+            <div class="info">
+                <div class="song-title">Sonne</div>
+                <div class="song-artist">Rammstein • Наш вайб 🤘</div>
+            </div>
+            <div style="font-size: 1.5rem; color: var(--accent);">❤</div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="emoji">🐶</div>
+                <h3>Начало</h3>
+                <p>9 октября 2025. Все началось с разговора о собаках. Твоя Дайра и мой Боня. Кто знал, что это приведет нас сюда?</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">📏</div>
+                <h3>160 vs 175</h3>
+                <p>Твой рост 160 см. Мой 175 см. Идеальная разница, чтобы тебе было удобно утыкаться носом мне в плечо.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🏠</div>
+                <h3>Строители</h3>
+                <p>Как мы ВМЕСТЕ строили домик в игре. Спорили из-за блоков, ты решала, где вход. Наш первый совместный уют.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🤪</div>
+                <h3>ДЫДЫДЫД</h3>
+                <p>"ДЫДЫДЫДДЫД". Наш странный язык, который понимаем только мы. Обожаю наше общее безумие.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🍍</div>
+                <h3>Ананасы</h3>
+                <p>1 января. Твой вопрос "Зачем едят ананасы?". И твой ответ... Ты умеешь удивлять и смущать одновременно! 😏</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🐈</div>
+                <h3>Мурмуристый</h3>
+                <p>Твое первое милое прозвище для меня. "Мурмуристый котик". Я до сих пор улыбаюсь, когда это вспоминаю.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">😂</div>
+                <h3>Сися</h3>
+                <div class="quote">"СЕГОДНЯ ТЫ СНОВА СИСЯ"</div>
+                <p>Твой приговор. Ладно, буду твоей Сисей, раз ты так решила. Главное, что твой.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">👀</div>
+                <h3>Катюха</h3>
+                <p>Как ты ревновала меня к "Катюхе"! А оказалось, что никакой Катюхи и нет. Ты у меня одна такая.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🥟</div>
+                <h3>Вареник</h3>
+                <p>Еще одно мое имя - Вареник. Не знаю почему, но от тебя это звучит мило.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🍭</div>
+                <h3>Вопросики</h3>
+                <p>Ты: "Сосал?". Я: "Чупа-чупс да". Я выкрутился в последнюю секунду! 1:0 в мою пользу.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🔊</div>
+                <h3>ЕБАШИТЬ</h3>
+                <p>Твоя реакция капсом на громкую музыку или звуки. Обожаю твою эмоциональность и "ХЫХЫХЫ".</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🐴</div>
+                <h3>Лошадэ</h3>
+                <p>Спам стикерами с лошадьми. "Лошади", "Лошада". Глубокого смысла ноль, зато смеха - вагон.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🎥</div>
+                <h3>Кружочки</h3>
+                <p>Сначала ты стеснялась, а теперь кидаешь видео! Видеть тебя - лучшая часть моего дня.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🍪</div>
+                <h3>ПРЯНИЧЕК</h3>
+                <p>Надпись "ПРЯНИЧЕК" на весь экран в игре. Мы смеялись полчаса. Это наш локальный мем.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🤘</div>
+                <h3>Rammstein</h3>
+                <p>Sonne и Deutschland. То, что наши музыкальные вкусы совпали - это судьба.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">👍</div>
+                <h3>Лайк</h3>
+                <div class="quote">"Я ТЕБЕ ПОСТАВЛЮ ЛАЙК ЛАЙК ЛАЙК"</div>
+                <p>Эта песня теперь ассоциируется только с тобой.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🇺🇦</div>
+                <h3>Добрий вечір</h3>
+                <p>"Добрий вечір тобі". Наши переписки на украинском звучат так тепло и уютно.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🦷</div>
+                <h3>Зубки</h3>
+                <p>Я ною про брекеты, а ты: "Кто тебе по зубам дал?". Твоя забота бесценна!</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🤫</div>
+                <h3>Тин Тун</h3>
+                <p>"Тин Тун Тин Тун". Мы общаемся звуками, и нам не нужны слова.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🐰</div>
+                <h3>Зая</h3>
+                <p>Иногда я бываю просто Заей. Это самые нежные моменты.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🔐</div>
+                <h3>Никуда</h3>
+                <div class="quote">"Ты никуда от меня не денешься"</div>
+                <p>Я знаю. И я счастлив, что мне некуда деваться, кроме как к тебе.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🌸</div>
+                <h3>Ландыши</h3>
+                <p>Твой стишок: "Хуй большой, а ландыш маленький". Великая поэзия! Поеты отдыхают.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">📌</div>
+                <h3>Пинтерест</h3>
+                <p>Я: "Ты меня видела?". Ты: "В пинтересте". Идеальный ответ.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">👵</div>
+                <h3>Пенсия</h3>
+                <p>Любишь называть меня дедом и пенсией. Ну погоди, я тебе еще покажу!</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🐈‍⬛</div>
+                <h3>Мурка</h3>
+                <p>Ты сама назвала себя Муркой. Теперь ты моя официальная Мурка.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🔪</div>
+                <h3>Ножницы</h3>
+                <p>"Ну не ножницы же, у тебя пизды нет". Твой юмор острый, но правдивый.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🚿</div>
+                <h3>Ванна</h3>
+                <p>Я: "Я купаться". Ты: "Я аж подавилась". Твоя реакция - золото.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🌚</div>
+                <h3>Плесень</h3>
+                <p>Вареник, Сися, а теперь еще и Плесень. Я коллекционирую твои прозвища.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">📐</div>
+                <h3>Геометрия</h3>
+                <p>И Геометрией я тоже был. Ты генератор случайных имен!</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">❤️</div>
+                <h3>Важное</h3>
+                <div class="quote">"Мне никогда не было на тебя похуй"</div>
+                <p>Эти слова греют меня до сих пор. Спасибо.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🏳️‍🌈</div>
+                <h3>Признание</h3>
+                <p>"Ладно, с таким геем я готова встречаться". Лучшее "Да" в истории.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">👊</div>
+                <h3>Кусь</h3>
+                <p>"Если я буду тебя пиздить и кусать, я буду твоей любовью?". Да, будешь.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">😴</div>
+                <h3>Сон</h3>
+                <p>Мои истории про сон на полу на поролоне. Ты меня жалеешь, но при этом ржешь. Любя.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">💇‍♂️</div>
+                <h3>Красавчик</h3>
+                <p>Каждый раз после стрижки ты говоришь: "Не ну мой красавчик". Моя самооценка летит в космос.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">👯‍♀️</div>
+                <h3>Шипперы</h3>
+                <p>Твоя подруга нас шипперила с первого дня. Она что-то знала!</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">💩</div>
+                <h3>Романтика</h3>
+                <p>Я: "Я срать". Ты: "НУ И СРИ". Вот это уровень доверия 80lvl.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🌌</div>
+                <h3>Сны</h3>
+                <p>Нам снятся сны друг о друге. Мы уже поселились в подсознании.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">💌</div>
+                <h3>Поддержка</h3>
+                <p>Когда мне плохо, ты всегда говоришь: "Ты можешь мне рассказать". Я это ценю.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">👋</div>
+                <h3>Прощания</h3>
+                <p>Наше "Спокойной ночи" может длиться часами. Мы просто не можем наговориться.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🎮</div>
+                <h3>Игры</h3>
+                <p>Наши совместные тупняки в играх - это лучшее время.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🙈</div>
+                <h3>Глаза</h3>
+                <p>Твои глаза, которые на фото всегда разные, но всегда красивые.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🎥</div>
+                <h3>Фильм</h3>
+                <p>"Ты случайно не фильм? А то я на тебя смотрю". Твои подкаты - это топ.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🚪</div>
+                <h3>Чат</h3>
+                <p>41 000 сообщений. Это целая книга нашей жизни. И я не хочу, чтобы она заканчивалась.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🧸</div>
+                <h3>Уют</h3>
+                <p>С тобой просто уютно. Даже когда мы молчим или несем чушь.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">🙃</div>
+                <h3>Разные</h3>
+                <p>Мы разные, но мы идеально дополняем друг друга.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">😘</div>
+                <h3>Утро</h3>
+                <p>Люблю твои "Доброе утро". День начинается правильно только с них.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">📅</div>
+                <h3>14 Февраля</h3>
+                <p>День всех влюбленных. И я счастлив, что думаю о тебе.</p>
+            </div>
+
+            <div class="card">
+                <div class="emoji">💘</div>
+                <h3>Ты</h3>
+                <p>Ты - мое главное событие. Моя Мурка, Сися и Зая в одном лице!</p>
+            </div>
+            
+        </div>
+
+        <button class="btn-love" onclick="explode()">💖 ЖМЯК СЮДА 💖</button>
+    </div>
+
+    <script>
+        // Убираем загрузчик
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                }, 600);
+            }, 1000);
+        });
+
+        // Счетчик дней
+        const start = new Date('2025-10-09');
+        const now = new Date();
+        const diff = Math.ceil((now - start) / (1000 * 60 * 60 * 24));
+        
+        let currentDay = 0;
+        const dayElement = document.getElementById('days');
+        const timer = setInterval(() => {
+            currentDay += 2;
+            dayElement.innerText = currentDay;
+            if (currentDay >= diff) {
+                dayElement.innerText = diff;
+                clearInterval(timer);
+            }
+        }, 20);
+
+        // Генерация фона
+        const particles = document.getElementById('particles');
+        for(let i=0; i<15; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 50 + 20;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDuration = Math.random() * 20 + 10 + 's';
+            particles.appendChild(p);
+        }
+
+        // Появление карточек
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card').forEach(c => observer.observe(c));
+
+        // Кнопка
+        function explode() {
+            alert('Ты самая лучшая! Люблю тебя! ❤️');
+            for(let i=0; i<40; i++) {
+                setTimeout(() => {
+                    const h = document.createElement('div');
+                    h.innerHTML = '❤️';
+                    h.style.position = 'fixed';
+                    h.style.left = Math.random() * 100 + '%';
+                    h.style.bottom = '-50px';
+                    h.style.fontSize = Math.random() * 30 + 20 + 'px';
+                    h.style.transition = 'all 1.5s ease-out';
+                    h.style.zIndex = 1000;
+                    document.body.appendChild(h);
+                    setTimeout(() => {
+                        h.style.bottom = '110vh';
+                        h.style.opacity = 0;
+                    }, 50);
+                    setTimeout(() => h.remove(), 1600);
+                }, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>
